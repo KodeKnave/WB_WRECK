@@ -1078,25 +1078,26 @@ def preprocess_entities_internal(glob):
 		if not isinstance(e[8], AGGREGATE): e[8] = unparse_attr_aggregate(e[8])
 		for item, modifier in e[7]:
 			item_list = glob['items'][parse_int(item)]
+			if not isinstance(item_list[7], AGGREGATE): item_list[7] = unparse_item_aggregate(item_list[7]) # plain module system: stats still packed
 			item_type = (item_list[4] & 0xFF)
 			if troop_is_hero:
-				if item in duplicate_items: WRECK.warnings.append("Duplicate weapon item {0}{9}{3} in the hero troop {0}{10}{3}".format(*COLORAMA, item.name, e[0]))
+				if item in duplicate_items: WRECK.warnings.append("Duplicate weapon item {0}{9}{3} in the hero troop {0}{10}{3}".format(*COLORAMA, item_list[1], e[0]))
 				if ((itp_type_one_handed_wpn <= item_type <= itp_type_polearm) or (itp_type_bow <= item_type <= itp_type_crossbow) or (itp_type_pistol <= item_type <= itp_type_musket)):
 					duplicate_items.append(item)
 					weapon_items.append(item)
 				elif (itp_type_arrows <= item_type <= itp_type_bolts) or (item_type == itp_type_thrown) or (item_type == itp_type_bullets):
 					weapon_items.append(item)
 				elif item_type == itp_type_head_armor:
-					if int(item.flags & itp_civilian): head_armors_civilian.append(item)
+					if int(item_list[4] & itp_civilian): head_armors_civilian.append(item)
 					else: head_armors.append(item)
 				elif item_type == itp_type_body_armor:
-					if int(item.flags & itp_civilian): body_armors_civilian.append(item)
+					if int(item_list[4] & itp_civilian): body_armors_civilian.append(item)
 					else: body_armors.append(item)
 				elif item_type == itp_type_hand_armor:
-					if int(item.flags & itp_civilian): hand_armors_civilian.append(item)
+					if int(item_list[4] & itp_civilian): hand_armors_civilian.append(item)
 					else: hand_armors.append(item)
 				elif item_type == itp_type_foot_armor:
-					if int(item.flags & itp_civilian): leg_armors_civilian.append(item)
+					if int(item_list[4] & itp_civilian): leg_armors_civilian.append(item)
 					else: leg_armors.append(item)
 				elif item_type == itp_type_horse: horses.append(item)
 			difficulty = item_list[7].get('diff', 0)
@@ -1148,16 +1149,16 @@ def preprocess_entities_internal(glob):
 				notice = "{0}trp.{9}{6} skill {0}{10} {11}{6} is exceeding maximum {0}{12}{6} allowed by 'module_skills.py'.".format(*COLORAMA, e[0], WRECK.skills_maximums[i][0], skill, WRECK.skills_maximums[i][1])
 				WRECK.notices.append(notice)
 			skill_mask >>= 4
-		if len(weapon_items) > 4: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} weapon items: {0}{11}{3}.".format(*COLORAMA, e[0], len(weapon_items), list(map(lambda n: n.name, weapon_items))))
-		if len(head_armors) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} head armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(head_armors), list(map(lambda n: n.name, head_armors))))
-		if len(body_armors) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} body armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(body_armors), list(map(lambda n: n.name, body_armors))))
-		if len(hand_armors) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} hand armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(hand_armors), list(map(lambda n: n.name, hand_armors))))
-		if len(leg_armors) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} foot armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(leg_armors), list(map(lambda n: n.name, leg_armors))))
-		if len(head_armors_civilian) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} civilian head armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(head_armors_civilian), list(map(lambda n: n.name, head_armors_civilian))))
-		if len(body_armors_civilian) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} civilian body armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(body_armors_civilian), list(map(lambda n: n.name, body_armors_civilian))))
-		if len(hand_armors_civilian) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} civilian hand armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(hand_armors_civilian), list(map(lambda n: n.name, hand_armors_civilian))))
-		if len(leg_armors_civilian) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} civilian foot armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(leg_armors_civilian), list(map(lambda n: n.name, leg_armors_civilian))))
-		if len(horses) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} horses: {0}{11}{3}.".format(*COLORAMA, e[0], len(horses), list(map(lambda n: n.name, horses))))
+		if len(weapon_items) > 4: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} weapon items: {0}{11}{3}.".format(*COLORAMA, e[0], len(weapon_items), list(map(lambda n: glob['items'][parse_int(n)][1], weapon_items))))
+		if len(head_armors) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} head armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(head_armors), list(map(lambda n: glob['items'][parse_int(n)][1], head_armors))))
+		if len(body_armors) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} body armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(body_armors), list(map(lambda n: glob['items'][parse_int(n)][1], body_armors))))
+		if len(hand_armors) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} hand armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(hand_armors), list(map(lambda n: glob['items'][parse_int(n)][1], hand_armors))))
+		if len(leg_armors) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} foot armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(leg_armors), list(map(lambda n: glob['items'][parse_int(n)][1], leg_armors))))
+		if len(head_armors_civilian) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} civilian head armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(head_armors_civilian), list(map(lambda n: glob['items'][parse_int(n)][1], head_armors_civilian))))
+		if len(body_armors_civilian) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} civilian body armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(body_armors_civilian), list(map(lambda n: glob['items'][parse_int(n)][1], body_armors_civilian))))
+		if len(hand_armors_civilian) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} civilian hand armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(hand_armors_civilian), list(map(lambda n: glob['items'][parse_int(n)][1], hand_armors_civilian))))
+		if len(leg_armors_civilian) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} civilian foot armors: {0}{11}{3}.".format(*COLORAMA, e[0], len(leg_armors_civilian), list(map(lambda n: glob['items'][parse_int(n)][1], leg_armors_civilian))))
+		if len(horses) > 1: WRECK.warnings.append("The hero {0}{9}{3} has {0}{10}{3} horses: {0}{11}{3}.".format(*COLORAMA, e[0], len(horses), list(map(lambda n: glob['items'][parse_int(n)][1], horses))))
 #	for e in glob['scripts']:
 #		script_id = e[0].lower()
 #		if e[0] != script_id:

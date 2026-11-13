@@ -63,3 +63,5 @@ target/
 variables.txt
 *.bak
 ID_*.py
+# Code-graph index of the harness (regenerated on every reindex)
+.codebase-memory/

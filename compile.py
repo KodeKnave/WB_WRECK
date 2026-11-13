@@ -743,3 +743,4 @@ if 'slots' in sys.argv:
 	print('{5}{8}Hint: Engine creates array of slots in quantity power of 2 and greater or equal to the maximum slot number.\n{0}'.format(*COLORAMA))
 
 if 'wait' in sys.argv: input('Press Enter to finish>')
+if not WRECK.successful: sys.exit(1)
